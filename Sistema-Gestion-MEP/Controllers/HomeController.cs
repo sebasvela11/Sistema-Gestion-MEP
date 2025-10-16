@@ -1,15 +1,17 @@
-﻿using System.Web.Mvc;
-using Sistema_Gestion_MEP.Models;
+﻿using System.Threading.Tasks;
+using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
-public class HomeController : Controller
+namespace Sistema_Gestion_MEP.Controllers
 {
-    public ActionResult TestDB()
+    [Authorize]
+    public class HomeController : Controller
     {
-        using (var db = new ApplicationDbContext())
+        public ActionResult Index()
         {
-            db.Pruebas.Add(new Prueba { Texto = "Hola SQL 2019 con Auth SQL" });
-            db.SaveChanges();
+            // Menú principal (tarjetas según rol) — lo pinta la vista
+            return View();
         }
-        return Content("OK DB");
     }
 }

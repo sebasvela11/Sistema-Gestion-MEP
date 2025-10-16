@@ -16,6 +16,7 @@ namespace Sistema_Gestion_MEP
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            IdentitySeeder.Seed();
         }
     }
 }

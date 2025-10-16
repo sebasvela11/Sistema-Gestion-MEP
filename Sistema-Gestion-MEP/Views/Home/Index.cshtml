@@ -1,33 +1,341 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Menu principal";
+    var isCoord = User.IsInRole("Coordinador");
+    var isProf = User.IsInRole("Profesor");
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: white;
+        box-shadow: 0 4px 15px rgba(42, 82, 152, 0.2);
+    }
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+        .dashboard-header h3 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .dashboard-header .welcome-text {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+
+        .dashboard-header i {
+            margin-right: 12px;
+            font-size: 32px;
+        }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #2a5298;
+        display: inline-block;
+    }
+
+    .menu-card {
+        background: white;
+        border-radius: 12px;
+        border: none;
+        transition: all 0.3s ease;
+        height: 100%;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        position: relative;
+    }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.15);
+        }
+
+            .menu-card:hover::before {
+                transform: scaleX(1);
+            }
+
+    .menu-card-body {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .menu-card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .menu-card:hover .menu-card-icon {
+        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+    }
+
+    .menu-card-icon i {
+        font-size: 28px;
+        color: #2a5298;
+        transition: all 0.3s ease;
+    }
+
+    .menu-card:hover .menu-card-icon i {
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .menu-card-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 12px;
+    }
+
+    .menu-card-description {
+        color: #6c757d;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        flex-grow: 1;
+    }
+
+    .menu-card-btn {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(42, 82, 152, 0.2);
+    }
+
+        .menu-card-btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+            color: white;
+        }
+
+        .menu-card-btn i {
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-card-btn:hover i {
+            transform: translateX(3px);
+        }
+
+    .role-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 10px;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    @@media (max-width: 768px) {
+        .dashboard-header {
+            padding: 20px;
+        }
+
+            .dashboard-header h3 {
+                font-size: 22px;
+            }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .menu-card-body {
+            padding: 20px;
+        }
+    }
+
+    .stats-container {
+        background: linear-gradient(135deg, rgba(30, 60, 114, 0.05) 0%, rgba(42, 82, 152, 0.05) 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+    }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h4 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+</style>
+
+<div class="dashboard-header">
+    <h3>
+        <i class="fa-solid fa-house"></i>
+        Panel de Control
+    </h3>
+    <div class="welcome-text">
+        Bienvenido, <strong>@User.Identity.Name</strong>
     </div>
-</main>
+    @if (isCoord)
+    {
+        <span class="role-badge"><i class="fa-solid fa-user-tie me-1"></i>Coordinador</span>
+    }
+    @if (isProf)
+    {
+        <span class="role-badge"><i class="fa-solid fa-chalkboard-user me-1"></i>Profesor</span>
+    }
+</div>
+
+@if (isCoord)
+{
+    <div class="mb-4">
+        <h4 class="section-title">Gestion Administrativa</h4>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="menu-card">
+            <div class="menu-card-body">
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <h5 class="menu-card-title">Especialidades</h5>
+                <p class="menu-card-description">
+                    Cree y administre las especialidades tecnicas disponibles en el sistema educativo.
+                </p>
+                <a href="@Url.Action("Index","Specialty")" class="menu-card-btn">
+                    Gestionar Especialidades
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="menu-card">
+            <div class="menu-card-body">
+                <div class="menu-card-icon">
+                    <i class="fa-regular fa-calendar-days"></i>
+                </div>
+                <h5 class="menu-card-title">Periodos Lectivos</h5>
+                <p class="menu-card-description">
+                    Gestione trimestres, semestres y anos lectivos del sistema academico.
+                </p>
+                <a href="@Url.Action("Index","Term")" class="menu-card-btn">
+                    Gestionar Periodos
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="menu-card">
+            <div class="menu-card-body">
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+                <h5 class="menu-card-title">Control de Acceso</h5>
+                <p class="menu-card-description">
+                    Otorgue y gestione permisos de acceso a profesores por especialidad y periodo.
+                </p>
+                <a href="@Url.Action("Create","Access")" class="menu-card-btn">
+                    Asignar Accesos
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+@if (isProf)
+{
+    <div class="mb-4">
+        <h4 class="section-title">Mis Recursos</h4>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="menu-card">
+            <div class="menu-card-body">
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h5 class="menu-card-title">Mis Accesos</h5>
+                <p class="menu-card-description">
+                    Visualice todas las especialidades y periodos a los que tiene acceso asignado.
+                </p>
+                <a href="@Url.Action("Index","Profesor")" class="menu-card-btn">
+                    Ver Mis Accesos
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="menu-card">
+            <div class="menu-card-body">
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                </div>
+                <h5 class="menu-card-title">Plantillas y Documentos</h5>
+                <p class="menu-card-description">
+                    Descargue las plantillas y documentos disponibles para el periodo actual.
+                </p>
+                <a href="@Url.Action("Index","Profesor")#plantillas" class="menu-card-btn">
+                    Ver Plantillas
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!isCoord && !isProf)
+{
+    <div class="empty-state">
+        <i class="fa-solid fa-user-slash"></i>
+        <h4>Sin permisos asignados</h4>
+        <p>No tiene roles asignados actualmente. Contacte al administrador del sistema.</p>
+    </div>
+}

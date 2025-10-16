@@ -23,9 +23,9 @@ project.lock.json
 *.bak
 
 # Archivos subidos por usuarios
-MepPortal/App_Data/uploads/
-MepPortal/App_Data/templates/
-MepPortal/App_Data/logs/
+Sistema-Gestion-MEP/App_Data/templates/
+Sistema-Gestion-MEP/App_Data/uploads/
+Sistema-Gestion-MEP/App_Data/logs/
 
 # Archivos temporales
 *.tmp

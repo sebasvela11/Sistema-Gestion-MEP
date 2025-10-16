@@ -1,40 +1,509 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@using Microsoft.AspNet.Identity
+@{
+    var userName = User.Identity.IsAuthenticated ? User.Identity.GetUserName() : "";
+    var isCoord = User.IsInRole("Coordinador");
+    var isProf = User.IsInRole("Profesor");
+}
+<!DOCTYPE html>
+<html lang="es">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <title>@ViewBag.Title - Sistema de Gestion MEP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap 5 (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    @RenderSection("styles", required: false)
+    <style>
+        :root {
+            --primary-dark: #1e3c72;
+            --primary-main: #2a5298;
+            --primary-light: #e3f2fd;
+            --accent: #667eea;
+            --text-dark: #2c3e50;
+            --text-muted: #6c757d;
+            --bg-light: #f8f9fa;
+            --bg-lighter: #ffffff;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 15px rgba(42, 82, 152, 0.15);
+            --shadow-lg: 0 8px 25px rgba(42, 82, 152, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Mejorado */
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
+            box-shadow: var(--shadow-md);
+            padding: 1rem 0;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: white !important;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+            .navbar-brand i {
+                font-size: 1.6rem;
+                margin-right: 10px;
+                animation: pulse 2s ease-in-out infinite;
+            }
+
+        @@keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            color: white !important;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+            .nav-link i {
+                margin-right: 6px;
+                transition: transform 0.3s ease;
+            }
+
+            .nav-link:hover {
+                background: rgba(255, 255, 255, 0.15);
+                color: white !important;
+                transform: translateY(-1px);
+            }
+
+                .nav-link:hover i {
+                    transform: scale(1.15);
+                }
+
+        .navbar-text {
+            color: rgba(255, 255, 255, 0.95) !important;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            color: white !important;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .btn-logout:hover {
+                background: white;
+                color: var(--primary-main) !important;
+                border-color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.3);
+            padding: 0.5rem;
+        }
+
+            .navbar-toggler:focus {
+                box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+            }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Main Container */
+        .container-main {
+            padding: 2.5rem 0;
+            flex: 1;
+            max-width: 1200px;
+        }
+
+        /* Alertas Mejoradas */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @@keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert i {
+            font-size: 1.3rem;
+            margin-right: 12px;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+            .card:hover {
+                box-shadow: var(--shadow-md);
+            }
+
+        .card-quick {
+            transition: all 0.3s ease;
+        }
+
+            .card-quick:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-lg);
+            }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 2rem 0;
+            margin-top: auto;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+            footer small {
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            footer i {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+        /* Breadcrumb personalizado */
+        .breadcrumb {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Botones mejorados */
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(42, 82, 152, 0.3);
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(42, 82, 152, 0.4);
+            }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
+            border-radius: 5px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--primary-dark);
+            }
+
+        /* Responsive */
+        @@media (max-width: 991px) {
+            .navbar-nav {
+                padding-top: 1rem;
+            }
+
+            .nav-link {
+                margin: 0.25rem 0;
+            }
+
+            .navbar-text {
+                margin: 0.5rem 0;
+            }
+
+            .btn-logout {
+                margin-top: 0.5rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .container-main {
+                padding: 1.5rem 0;
+            }
+        }
+
+        /* Loading animation */
+        .page-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+            .page-loading.active {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+        /* Mejora de tablas */
+        .table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+            .table thead {
+                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
+                color: white;
+            }
+
+                .table thead th {
+                    border: none;
+                    font-weight: 600;
+                    padding: 1rem;
+                }
+
+            .table tbody tr {
+                transition: background 0.2s ease;
+            }
+
+                .table tbody tr:hover {
+                    background: var(--primary-light);
+                }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
-            @Html.ActionLink("Nombre de la aplicación", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="@Url.Action("Index","Home")">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>Sistema Gestion MEP</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+            <div class="collapse navbar-collapse" id="topnav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    @if (isCoord)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index","Specialty")">
+                                <i class="fa-solid fa-layer-group"></i>Especialidades
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index","Term")">
+                                <i class="fa-regular fa-calendar-days"></i>Periodos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Create","Access")">
+                                <i class="fa-solid fa-user-lock"></i>Asignar acceso
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("List","Access")">
+                                <i class="fa-solid fa-list-check"></i>Accesos
+                            </a>
+                        </li>
+                    }
+                    @if (isProf)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index","Profesor")">
+                                <i class="fa-solid fa-folder-open"></i>Mis accesos
+                            </a>
+                        </li>
+                    }
+                </ul>
+
+                <ul class="navbar-nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <span class="navbar-text">
+                                <i class="fa-regular fa-user"></i>@userName
+                            </span>
+                        </li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn btn-logout" href="@Url.Action("LogOff","Account")">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Salir</span>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
     </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
-        </footer>
-    </div>
 
+    <main class="container container-main">
+        @RenderSection("header", required: false)
+
+        @if (TempData["ok"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>@TempData["ok"]</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["err"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>@TempData["err"]</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["info"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>@TempData["info"]</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="text-center">
+        <small>
+            <i class="fa-regular fa-copyright"></i>
+            @DateTime.Now.Year — Sistema de Gestion MEP
+            <span class="mx-2">|</span>
+            <i class="fa-solid fa-building-columns"></i>
+            Ministerio de Educacion Publica
+        </small>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    <script>
+        // Auto-ocultar alertas despues de 5 segundos
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function (alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+
+        // Resaltar enlace activo en navbar
+        document.addEventListener('DOMContentLoaded', function () {
+            var currentPath = window.location.pathname;
+            var navLinks = document.querySelectorAll('.nav-link');
+
+            navLinks.forEach(function (link) {
+                if (link.getAttribute('href') === currentPath) {
+                    link.style.background = 'rgba(255, 255, 255, 0.2)';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
