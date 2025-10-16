@@ -1,30 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Sistema_Gestion_MEP.Models;
 
-namespace Sistema_Gestion_MEP.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    public ActionResult TestDB()
     {
-        public ActionResult Index()
+        using (var db = new ApplicationDbContext())
         {
-            return View();
+            db.Pruebas.Add(new Prueba { Texto = "Hola SQL 2019 con Auth SQL" });
+            db.SaveChanges();
         }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
+        return Content("OK DB");
     }
 }
