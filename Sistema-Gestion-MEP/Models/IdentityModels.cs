@@ -24,19 +24,8 @@ namespace Sistema_Gestion_MEP.Models
     // Contexto principal de Entity Framework para Identity y todas las tablas personalizadas
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
-        {
-        }
-
-        public static ApplicationDbContext Create()
-        {
-            return new ApplicationDbContext();
-        }
-
-        // ----------------------------
-        // TABLAS PERSONALIZADAS DEL SISTEMA
-        // ----------------------------
+        public ApplicationDbContext() : base("DefaultConnection", throwIfV1Schema: false) { }
+        public static ApplicationDbContext Create() => new ApplicationDbContext();
 
         public DbSet<Specialty> Specialties { get; set; }
         public DbSet<Term> Terms { get; set; }

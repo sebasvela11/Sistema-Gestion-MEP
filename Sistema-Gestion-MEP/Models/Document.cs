@@ -3,28 +3,24 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sistema_Gestion_MEP.Models
 {
-    // Type: 1=Template, 2=Submission
     public class Document
     {
         public int Id { get; set; }
 
-        public byte Type { get; set; }                 // 1/2
-        public string OwnerUserId { get; set; }        // NULL en plantillas
+        // 1 = Plantilla, 2 = Entrega
+        public int Type { get; set; }
+
+        // Para entrega: dueño del archivo (profesor)
+        public string OwnerUserId { get; set; }    // <-- Identity user (solo para Type=2)
         public int SpecialtyId { get; set; }
         public int TermId { get; set; }
 
-        [Required, StringLength(255)]
         public string FileName { get; set; }
+        public string StoredPath { get; set; }
+        public long FileSizeBytes { get; set; }
+        public DateTime UploadedAtUtc { get; set; }
+        public DateTime? DeadlineUtc { get; set; } // opcional
 
-        [Required, StringLength(500)]
-        public string StoredPath { get; set; }         // ruta relativa en App_Data
-
-        public long? FileSizeBytes { get; set; }
-        public DateTime UploadedAtUtc { get; set; } = DateTime.UtcNow;
-        public DateTime? DeadlineUtc { get; set; }
-
-        // Relaciones
-        public virtual ApplicationUser OwnerUser { get; set; }
         public virtual Specialty Specialty { get; set; }
         public virtual Term Term { get; set; }
     }

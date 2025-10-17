@@ -7,13 +7,13 @@ namespace Sistema_Gestion_MEP.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class EstructuraBase : IMigrationMetadata
+    public sealed partial class InitialCreate : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(EstructuraBase));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
         
         string IMigrationMetadata.Id
         {
-            get { return "202510162029156_EstructuraBase"; }
+            get { return "202510171915248_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

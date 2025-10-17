@@ -1,6 +1,21 @@
-@model IEnumerable<Sistema_Gestion_MEP.Controllers.AccessListViewModel>
+﻿@model IEnumerable<Sistema_Gestion_MEP.Controllers.AccessListViewModel>
+
 @{
-    ViewBag.Title = "Accesos asignados";
+    ViewBag.Title = "Accesos";
+
+    // Calcular total sin LINQ
+    bool hasItems = false;
+    int total = 0;
+    if (Model != null)
+    {
+        var e = Model.GetEnumerator();
+        hasItems = e.MoveNext();
+        if (hasItems)
+        {
+            total = 1;
+            while (e.MoveNext()) { total++; }
+        }
+    }
 }
 
 <style>
@@ -11,24 +26,50 @@
         margin-bottom: 2rem;
         color: white;
         box-shadow: 0 4px 15px rgba(42, 82, 152, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
-        .page-header h3 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .page-header-content h3 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-        .page-header .stats-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.5rem 1.2rem;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            margin-top: 0.5rem;
-            display: inline-block;
+    .page-header-content p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.95;
+        font-size: 0.95rem;
+    }
+
+    .btn-create {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+        .btn-create:hover {
+            background: white;
+            color: #2a5298;
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
         }
 
     .breadcrumb-custom {
@@ -54,85 +95,44 @@
 
             .breadcrumb-custom .breadcrumb-item a:hover {
                 color: #1e3c72;
-                transform: translateX(2px);
             }
 
         .breadcrumb-custom .breadcrumb-item.active {
             color: #6c757d;
         }
 
-    .filter-card {
-        background: white;
-        border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        margin-bottom: 2rem;
+    .info-box {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid #1976d2;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: start;
+        gap: 12px;
     }
 
-        .filter-card .filter-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .info-box i {
+            color: #1976d2;
+            font-size: 1.3rem;
+            margin-top: 2px;
         }
 
-        .filter-card .form-label {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
+    .info-box-content {
+        flex: 1;
+    }
+
+        .info-box-content strong {
+            display: block;
+            color: #0d47a1;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-box-content p {
+            margin: 0;
+            color: #1565c0;
             font-size: 0.9rem;
-        }
-
-        .filter-card .form-select {
-            border: 2px solid #e0e6ed;
-            border-radius: 8px;
-            padding: 0.65rem 1rem;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            background-color: #f8f9fa;
-        }
-
-            .filter-card .form-select:focus {
-                border-color: #2a5298;
-                background-color: white;
-                box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
-            }
-
-    .btn-filter {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        color: white;
-        border: none;
-        padding: 0.65rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(42, 82, 152, 0.3);
-    }
-
-        .btn-filter:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.4);
-            color: white;
-        }
-
-    .btn-clear {
-        background: white;
-        color: #6c757d;
-        border: 2px solid #e0e6ed;
-        padding: 0.65rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-        .btn-clear:hover {
-            background: #f8f9fa;
-            border-color: #2a5298;
-            color: #2a5298;
-            transform: translateY(-2px);
+            line-height: 1.5;
         }
 
     .table-container {
@@ -140,6 +140,7 @@
         border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
     }
 
     .table-custom {
@@ -151,7 +152,7 @@
         }
 
             .table-custom thead th {
-                color: white;
+                color: #2c3e50;
                 font-weight: 600;
                 padding: 1.2rem 1rem;
                 border: none;
@@ -165,7 +166,7 @@
                 }
 
         .table-custom tbody td {
-            padding: 1rem;
+            padding: 1.2rem 1rem;
             vertical-align: middle;
             color: #2c3e50;
             border-bottom: 1px solid #f0f0f0;
@@ -183,6 +184,105 @@
             .table-custom tbody tr:last-child td {
                 border-bottom: none;
             }
+
+    .id-badge {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1976d2;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .professor-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .professor-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #e65100;
+        font-size: 1.2rem;
+    }
+
+    .professor-name {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .specialty-badge {
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        color: #2e7d32;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .term-badge {
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+        color: #6a1b9a;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .date-display {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #495057;
+        font-size: 0.9rem;
+    }
+
+        .date-display i {
+            color: #28a745;
+            font-size: 1rem;
+        }
+
+        .date-display.deadline i {
+            color: #dc3545;
+        }
+
+        .date-display.no-deadline {
+            color: #6c757d;
+        }
+
+    .price-display {
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .price-free {
+        color: #28a745;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .price-paid {
+        color: #2a5298;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
 
     .empty-state {
         text-align: center;
@@ -207,68 +307,44 @@
             margin: 0;
         }
 
-    .badge-date {
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        color: #1976d2;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 500;
-        font-size: 0.85rem;
+    .stats-footer {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
-    .badge-deadline {
-        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-        color: #e65100;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 500;
-        font-size: 0.85rem;
+    .stats-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #6c757d;
+        font-size: 0.95rem;
     }
 
-    .badge-expired {
-        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-        color: #c62828;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 500;
-        font-size: 0.85rem;
-    }
+        .stats-item i {
+            color: #2a5298;
+            font-size: 1.2rem;
+        }
 
-    .badge-no-limit {
-        background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
-        color: #6a1b9a;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 500;
-        font-size: 0.85rem;
-    }
-
-    .professor-name {
-        font-weight: 600;
-        color: #2c3e50;
-    }
-
-    .specialty-badge {
-        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-        color: #2e7d32;
-        padding: 0.3rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 500;
-        font-size: 0.85rem;
-        display: inline-block;
-    }
+        .stats-item strong {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
 
     @@media (max-width: 768px) {
         .page-header {
             padding: 1.5rem;
         }
 
-            .page-header h3 {
-                font-size: 1.4rem;
-            }
-
-        .filter-card {
-            padding: 1.5rem;
+        .page-header-content h3 {
+            font-size: 1.4rem;
         }
 
         .table-container {
@@ -283,22 +359,17 @@
             .table-custom tbody td {
                 padding: 0.75rem 0.5rem;
             }
-    }
 
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    @@media (max-width: 576px) {
-        .action-buttons {
-            flex-direction: column;
+        .professor-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
         }
 
-            .action-buttons .btn {
-                width: 100%;
-            }
+        .stats-footer {
+            flex-direction: column;
+            text-align: center;
+        }
     }
 </style>
 
@@ -318,129 +389,120 @@
 </div>
 
 <div class="page-header">
-    <h3>
-        <i class="fa-solid fa-list-check"></i>
-        Gestion de Accesos
-    </h3>
-    <span class="stats-badge">
-        <i class="fa-solid fa-chart-simple me-1"></i>
-        Total de accesos: <strong>@ViewBag.Total</strong>
-    </span>
+    <div class="page-header-content">
+        <h3>
+            <i class="fa-solid fa-user-lock"></i>
+            Control de Accesos
+        </h3>
+        <p>Gestion de permisos por profesor, especialidad y periodo</p>
+    </div>
+    <a href="@Url.Action("Create","Access")" class="btn-create">
+        <i class="fa-solid fa-plus"></i>
+        Asignar Nuevo Acceso
+    </a>
 </div>
 
-<div class="filter-card">
-    <div class="filter-title">
-        <i class="fa-solid fa-filter"></i>
-        Filtrar accesos
+<div class="info-box">
+    <i class="fa-solid fa-circle-info"></i>
+    <div class="info-box-content">
+        <strong>Informacion sobre accesos</strong>
+        <p>Los accesos otorgan permisos a profesores para visualizar y descargar plantillas. El precio determina si las plantillas son gratuitas o de pago para el profesor.</p>
     </div>
-
-    @using (Html.BeginForm("List", "Access", FormMethod.Get, new { @class = "row g-3" }))
-    {
-        <div class="col-md-5">
-            <label class="form-label">
-                <i class="fa-solid fa-layer-group me-1"></i>
-                Especialidad
-            </label>
-            @Html.DropDownList("specialtyId", (SelectList)ViewBag.SpecialtyId, "Todas las especialidades", new { @class = "form-select" })
-        </div>
-        <div class="col-md-5">
-            <label class="form-label">
-                <i class="fa-regular fa-calendar-days me-1"></i>
-                Periodo
-            </label>
-            @Html.DropDownList("termId", (SelectList)ViewBag.TermId, "Todos los periodos", new { @class = "form-select" })
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-            <div class="action-buttons w-100">
-                <button type="submit" class="btn btn-filter flex-grow-1">
-                    <i class="fa-solid fa-magnifying-glass me-1"></i> Buscar
-                </button>
-                <a href="@Url.Action("List","Access")" class="btn btn-clear">
-                    <i class="fa-solid fa-rotate-right"></i>
-                </a>
-            </div>
-        </div>
-    }
 </div>
 
 <div class="table-container">
     <table class="table table-custom">
         <thead>
             <tr>
-                <th><i class="fa-regular fa-user"></i> Profesor</th>
+                <th><i class="fa-solid fa-hashtag"></i> ID</th>
+                <th><i class="fa-solid fa-chalkboard-user"></i> Profesor</th>
                 <th><i class="fa-solid fa-layer-group"></i> Especialidad</th>
                 <th><i class="fa-regular fa-calendar-days"></i> Periodo</th>
-                <th><i class="fa-regular fa-clock"></i> Fecha acceso</th>
-                <th><i class="fa-regular fa-bell"></i> Fecha limite</th>
+                <th><i class="fa-solid fa-calendar-check"></i> Fecha Acceso</th>
+                <th><i class="fa-solid fa-calendar-xmark"></i> Fecha Limite</th>
+                <th><i class="fa-solid fa-coins"></i> Precio CRC</th>
             </tr>
         </thead>
         <tbody>
-            @if (!Model.Any())
+            @if (!hasItems)
             {
                 <tr>
-                    <td colspan="5">
+                    <td colspan="7">
                         <div class="empty-state">
-                            <i class="fa-regular fa-folder-open"></i>
-                            <h5>No se encontraron accesos</h5>
-                            <p>No hay accesos que coincidan con los filtros seleccionados</p>
+                            <i class="fa-solid fa-user-lock"></i>
+                            <h5>No hay accesos registrados</h5>
+                            <p>Comience asignando accesos a los profesores para que puedan visualizar plantillas.</p>
                         </div>
                     </td>
                 </tr>
             }
             else
             {
-                var today = DateTime.Today;
-                foreach (var a in Model)
+                foreach (var item in Model)
                 {
-                    var isExpired = a.FechaLimite.HasValue && a.FechaLimite.Value < today;
                     <tr>
                         <td>
-                            <span class="professor-name">
-                                <i class="fa-solid fa-user-tie me-2" style="color: #2a5298;"></i>@a.Profesor
+                            <span class="id-badge">
+                                <i class="fa-solid fa-hashtag"></i>
+                                @item.Id
                             </span>
+                        </td>
+                        <td>
+                            <div class="professor-info">
+                                <div class="professor-icon">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                </div>
+                                <span class="professor-name">@item.Profesor</span>
+                            </div>
                         </td>
                         <td>
                             <span class="specialty-badge">
-                                @a.Especialidad
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                @item.Especialidad
                             </span>
                         </td>
-                        <td>@a.Periodo</td>
                         <td>
-                            <span class="badge-date">
-                                <i class="fa-regular fa-calendar-check me-1"></i>
-                                @a.FechaAcceso.ToString("dd/MM/yyyy")
+                            <span class="term-badge">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                @item.Periodo
                             </span>
-                            <br />
-                            <small style="color: #6c757d;">
-                                <i class="fa-regular fa-clock me-1"></i>@a.FechaAcceso.ToString("HH:mm")
-                            </small>
                         </td>
                         <td>
-                            @if (a.FechaLimite.HasValue)
+                            <div class="date-display">
+                                <i class="fa-solid fa-calendar-plus"></i>
+                                @item.FechaAcceso.ToString("dd/MM/yyyy")
+                            </div>
+                        </td>
+                        <td>
+                            @if (item.FechaLimite.HasValue)
                             {
-                                if (isExpired)
-                                {
-                                    <span class="badge-expired">
-                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                        @a.FechaLimite.Value.ToString("dd/MM/yyyy")
-                                    </span>
-                                    <br />
-                                    <small style="color: #c62828;">Expirado</small>
-                                }
-                                else
-                                {
-                                    <span class="badge-deadline">
-                                        <i class="fa-regular fa-calendar-xmark me-1"></i>
-                                        @a.FechaLimite.Value.ToString("dd/MM/yyyy")
-                                    </span>
-                                }
+                                <div class="date-display deadline">
+                                    <i class="fa-solid fa-clock"></i>
+                                    @item.FechaLimite.Value.ToString("dd/MM/yyyy")
+                                </div>
                             }
                             else
                             {
-                                <span class="badge-no-limit">
-                                    <i class="fa-solid fa-infinity me-1"></i>
+                                <div class="date-display no-deadline">
+                                    <i class="fa-solid fa-infinity"></i>
                                     Sin limite
-                                </span>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            @if (item.PriceCRC.HasValue && item.PriceCRC.Value > 0)
+                            {
+                                <div class="price-display price-paid">
+                                    <i class="fa-solid fa-money-bill-wave"></i>
+                                    ₡@String.Format("{0:N0}", item.PriceCRC.Value)
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="price-display price-free">
+                                    <i class="fa-solid fa-gift"></i>
+                                    Gratis
+                                </div>
                             }
                         </td>
                     </tr>
@@ -448,4 +510,15 @@
             }
         </tbody>
     </table>
+</div>
+
+<div class="stats-footer">
+    <div class="stats-item">
+        <i class="fa-solid fa-chart-simple"></i>
+        <span>Total de accesos: <strong>@total</strong></span>
+    </div>
+    <div class="stats-item">
+        <i class="fa-solid fa-info-circle"></i>
+        <span>Los accesos permiten a los profesores acceder a plantillas especificas</span>
+    </div>
 </div>

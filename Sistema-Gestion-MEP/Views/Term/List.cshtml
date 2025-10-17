@@ -1,10 +1,10 @@
-@model IEnumerable<Sistema_Gestion_MEP.Models.Specialty>
-
+@model IEnumerable<Sistema_Gestion_MEP.Models.Term>
 @{
-    ViewBag.Title = "Especialidades";
+    ViewBag.Title = "Periodos";
     var q = (string)ViewBag.Query;
+    int? year = ViewBag.Year as int?;
 
-    // ---- Calcular total y si hay elementos SIN usar LINQ ----
+    // Calcular total sin LINQ
     int total = 0;
     bool hasItems = false;
 
@@ -110,7 +110,7 @@
             color: #6c757d;
         }
 
-    .search-card {
+    .filter-card {
         background: white;
         border-radius: 12px;
         padding: 1.5rem;
@@ -118,28 +118,59 @@
         margin-bottom: 1.5rem;
     }
 
-    .search-input {
+    .filter-card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .filter-card-title i {
+            color: #2a5298;
+        }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .form-label-custom i {
+            color: #2a5298;
+            font-size: 0.95rem;
+        }
+
+    .form-control-custom,
+    .form-select-custom {
         border: 2px solid #e0e6ed;
         border-radius: 8px;
         padding: 0.75rem 1rem;
-        padding-left: 2.5rem;
         font-size: 0.95rem;
         transition: all 0.3s ease;
         background-color: #f8f9fa;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c757d'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: 0.75rem center;
-        background-size: 1.2rem;
     }
 
-        .search-input:focus {
+        .form-control-custom:focus,
+        .form-select-custom:focus {
             border-color: #2a5298;
             background-color: white;
             box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
             outline: none;
         }
 
-    .btn-search {
+    .form-select-custom {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232a5298' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    .btn-filter {
         background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         color: white;
         border: none;
@@ -148,9 +179,12 @@
         font-weight: 600;
         transition: all 0.3s ease;
         box-shadow: 0 2px 8px rgba(42, 82, 152, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
-        .btn-search:hover {
+        .btn-filter:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(42, 82, 152, 0.4);
             color: white;
@@ -165,6 +199,9 @@
         font-weight: 600;
         transition: all 0.3s ease;
         text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
         .btn-clear:hover {
@@ -225,50 +262,53 @@
                 border-bottom: none;
             }
 
-    .specialty-name {
+    .term-year {
+        font-weight: 700;
+        color: #2a5298;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .term-year i {
+            font-size: 1.2rem;
+        }
+
+    .term-label {
         font-weight: 600;
         color: #2c3e50;
         font-size: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 10px;
     }
 
-    .specialty-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
+    .order-badge {
         background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1976d2;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .date-display {
         display: flex;
         align-items: center;
-        justify-content: center;
-        color: #2a5298;
-        font-size: 1.2rem;
+        gap: 6px;
+        color: #495057;
+        font-size: 0.95rem;
     }
 
-    .badge-active {
-        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-        color: #155724;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
+        .date-display i {
+            color: #28a745;
+            font-size: 1rem;
+        }
 
-    .badge-inactive {
-        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-        color: #721c24;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
+        .date-display.end i {
+            color: #dc3545;
+        }
 
     .empty-state {
         text-align: center;
@@ -324,6 +364,18 @@
             font-weight: 700;
         }
 
+    .active-filter-badge {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        color: #e65100;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
     @@media (max-width: 768px) {
         .page-header {
             padding: 1.5rem;
@@ -333,7 +385,7 @@
             font-size: 1.4rem;
         }
 
-        .search-card {
+        .filter-card {
             padding: 1rem;
         }
 
@@ -350,37 +402,18 @@
                 padding: 0.75rem 0.5rem;
             }
 
-        .specialty-icon {
-            width: 35px;
-            height: 35px;
-            font-size: 1rem;
-        }
-
         .stats-footer {
             flex-direction: column;
             text-align: center;
         }
-    }
 
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    @@media (max-width: 576px) {
-        .action-buttons {
+        .filter-actions {
             flex-direction: column;
         }
 
-            .action-buttons .btn {
+            .filter-actions .btn {
                 width: 100%;
             }
-
-        .btn-create {
-            width: 100%;
-            justify-content: center;
-        }
     }
 </style>
 
@@ -393,7 +426,7 @@
                 </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                <i class="fa-solid fa-layer-group"></i> Especialidades
+                <i class="fa-regular fa-calendar-days"></i> Periodos
             </li>
         </ol>
     </nav>
@@ -402,32 +435,46 @@
 <div class="page-header">
     <div class="page-header-content">
         <h3>
-            <i class="fa-solid fa-layer-group"></i>
-            Especialidades Técnicas
+            <i class="fa-regular fa-calendar-days"></i>
+            Periodos Lectivos
         </h3>
-        <p>Gestión de especialidades del MEP</p>
+        <p>Gestion de trimestres, semestres y años academicos</p>
     </div>
-    <a href="@Url.Action("Create","Specialty")" class="btn-create">
+    <a href="@Url.Action("Create","Term")" class="btn-create">
         <i class="fa-solid fa-plus"></i>
-        Nueva Especialidad
+        Nuevo Periodo
     </a>
 </div>
 
-<div class="search-card">
-    @using (Html.BeginForm("List", "Specialty", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
+<div class="filter-card">
+    <div class="filter-card-title">
+        <i class="fa-solid fa-filter"></i>
+        Filtros de Busqueda
+    </div>
+    @using (Html.BeginForm("List", "Term", FormMethod.Get, new { @class = "row g-3" }))
     {
-        <div class="col-md-8">
-            <input type="text" class="form-control search-input" name="q" value="@q" placeholder="Buscar especialidades por nombre..." />
+        <div class="col-md-3">
+            <label class="form-label-custom">
+                <i class="fa-solid fa-calendar"></i>
+                Año
+            </label>
+            @Html.DropDownList("year", (SelectList)ViewBag.Years, "Todos los años", new { @class = "form-select form-select-custom" })
         </div>
-        <div class="col-md-4">
-            <div class="action-buttons">
-                <button type="submit" class="btn btn-search flex-grow-1">
-                    <i class="fa-solid fa-magnifying-glass me-1"></i> Buscar
-                </button>
-                <a href="@Url.Action("List","Specialty")" class="btn btn-clear">
-                    <i class="fa-solid fa-rotate-right"></i>
-                </a>
-            </div>
+        <div class="col-md-6">
+            <label class="form-label-custom">
+                <i class="fa-solid fa-tag"></i>
+                Etiqueta
+            </label>
+            <input type="text" class="form-control form-control-custom" name="q" value="@q" placeholder="Ej: I Trimestre, Semestre 2..." />
+        </div>
+        <div class="col-md-3 d-flex align-items-end gap-2 filter-actions">
+            <button type="submit" class="btn-filter flex-grow-1">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Buscar
+            </button>
+            <a href="@Url.Action("List","Term")" class="btn-clear">
+                <i class="fa-solid fa-rotate-right"></i>
+            </a>
         </div>
     }
 </div>
@@ -436,26 +483,29 @@
     <table class="table table-custom">
         <thead>
             <tr>
-                <th><i class="fa-solid fa-layer-group"></i> Especialidad</th>
-                <th><i class="fa-solid fa-toggle-on"></i> Estado</th>
+                <th><i class="fa-solid fa-calendar"></i> Año</th>
+                <th><i class="fa-solid fa-tag"></i> Etiqueta</th>
+                <th><i class="fa-solid fa-arrow-down-1-9"></i> Orden</th>
+                <th><i class="fa-solid fa-calendar-check"></i> Fecha Inicio</th>
+                <th><i class="fa-solid fa-calendar-xmark"></i> Fecha Fin</th>
             </tr>
         </thead>
         <tbody>
             @if (!hasItems)
             {
                 <tr>
-                    <td colspan="2">
+                    <td colspan="5">
                         <div class="empty-state">
-                            <i class="fa-regular fa-folder-open"></i>
-                            <h5>No se encontraron especialidades</h5>
+                            <i class="fa-regular fa-calendar-xmark"></i>
+                            <h5>No se encontraron periodos</h5>
                             <p>
-                                @if (string.IsNullOrEmpty(q))
+                                @if (string.IsNullOrEmpty(q) && !year.HasValue)
                                 {
-                                    <text>No hay especialidades registradas. Comience creando una nueva.</text>
+                                    <text>No hay periodos registrados. Comience creando uno nuevo.</text>
                                 }
                                 else
                                 {
-                                    <text>No hay resultados para "<strong>@q</strong>". Intente con otro término de búsqueda.</text>
+                                    <text>No hay resultados con los filtros aplicados. Intente con otros criterios.</text>
                                 }
                             </p>
                         </div>
@@ -464,31 +514,48 @@
             }
             else
             {
-                foreach (var s in Model)
+                foreach (var t in Model)
                 {
                     <tr>
                         <td>
-                            <div class="specialty-name">
-                                <div class="specialty-icon">
-                                    <i class="fa-solid fa-graduation-cap"></i>
-                                </div>
-                                <span>@s.Name</span>
+                            <div class="term-year">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                @t.Year
                             </div>
                         </td>
                         <td>
-                            @if (s.IsActive)
+                            <div class="term-label">@t.Label</div>
+                        </td>
+                        <td>
+                            <span class="order-badge">
+                                <i class="fa-solid fa-hashtag"></i>
+                                @t.OrderInYear
+                            </span>
+                        </td>
+                        <td>
+                            @if (t.StartDate.HasValue)
                             {
-                                <span class="badge-active">
-                                    <i class="fa-solid fa-circle-check"></i>
-                                    Activa
-                                </span>
+                                <div class="date-display">
+                                    <i class="fa-solid fa-calendar-check"></i>
+                                    @t.StartDate.Value.ToString("dd/MM/yyyy")
+                                </div>
                             }
                             else
                             {
-                                <span class="badge-inactive">
-                                    <i class="fa-solid fa-circle-xmark"></i>
-                                    Inactiva
-                                </span>
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td>
+                            @if (t.EndDate.HasValue)
+                            {
+                                <div class="date-display end">
+                                    <i class="fa-solid fa-calendar-xmark"></i>
+                                    @t.EndDate.Value.ToString("dd/MM/yyyy")
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
                             }
                         </td>
                     </tr>
@@ -501,13 +568,27 @@
 <div class="stats-footer">
     <div class="stats-item">
         <i class="fa-solid fa-chart-simple"></i>
-        <span>Total de especialidades: <strong>@total</strong></span>
+        <span>Total de periodos: <strong>@total</strong></span>
     </div>
-    @if (!string.IsNullOrEmpty(q))
+    @if (!string.IsNullOrEmpty(q) || year.HasValue)
     {
         <div class="stats-item">
             <i class="fa-solid fa-filter"></i>
-            <span>Filtrando por: <strong>"@q"</strong></span>
+            <span>Filtros activos:</span>
+            @if (year.HasValue)
+            {
+                <span class="active-filter-badge">
+                    <i class="fa-solid fa-calendar"></i>
+                    Año: @year
+                </span>
+            }
+            @if (!string.IsNullOrEmpty(q))
+            {
+                <span class="active-filter-badge">
+                    <i class="fa-solid fa-tag"></i>
+                    "@q"
+                </span>
+            }
         </div>
     }
 </div>

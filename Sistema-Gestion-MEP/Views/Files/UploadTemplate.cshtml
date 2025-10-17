@@ -1,0 +1,587 @@
+@{
+    ViewBag.Title = "Subir plantilla";
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(42, 82, 152, 0.2);
+    }
+
+        .page-header h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.95;
+            font-size: 0.95rem;
+        }
+
+    .breadcrumb-custom {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+        .breadcrumb-custom .breadcrumb {
+            margin: 0;
+            background: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .breadcrumb-custom .breadcrumb-item a:hover {
+                color: #1e3c72;
+            }
+
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+    .alert-custom {
+        border-radius: 10px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: none;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+
+        .alert-success i {
+            color: #28a745;
+            font-size: 1.3rem;
+        }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+
+        .alert-danger i {
+            color: #dc3545;
+            font-size: 1.3rem;
+        }
+
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e0e6ed;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .form-section-title i {
+            color: #2a5298;
+            font-size: 1.3rem;
+        }
+
+    .form-group-custom {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.6rem;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .form-label-custom i {
+            color: #2a5298;
+            font-size: 1rem;
+        }
+
+    .required-mark {
+        color: #dc3545;
+        font-weight: 700;
+        margin-left: 4px;
+    }
+
+    .form-control-custom,
+    .form-select-custom {
+        border: 2px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+    }
+
+        .form-control-custom:focus,
+        .form-select-custom:focus {
+            border-color: #2a5298;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            outline: none;
+        }
+
+    .form-select-custom {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232a5298' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    .form-hint {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .form-hint i {
+            font-size: 0.9rem;
+        }
+
+    .file-upload-area {
+        border: 2px dashed #e0e6ed;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+
+        .file-upload-area:hover {
+            border-color: #2a5298;
+            background-color: rgba(42, 82, 152, 0.05);
+        }
+
+        .file-upload-area.dragover {
+            border-color: #2a5298;
+            background: linear-gradient(135deg, rgba(227, 242, 253, 0.8) 0%, rgba(187, 222, 251, 0.5) 100%);
+        }
+
+    .file-upload-icon {
+        font-size: 3rem;
+        color: #2a5298;
+        margin-bottom: 1rem;
+    }
+
+    .file-upload-text {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .file-upload-hint {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .file-input-hidden {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+    }
+
+    .selected-file {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #1976d2;
+        font-weight: 600;
+    }
+
+        .selected-file i {
+            font-size: 1.5rem;
+        }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        border: none;
+        padding: 0.85rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(42, 82, 152, 0.4);
+            color: white;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .btn-cancel {
+        background: white;
+        color: #6c757d;
+        border: 2px solid #e0e6ed;
+        padding: 0.85rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-cancel:hover {
+            background: #f8f9fa;
+            border-color: #6c757d;
+            color: #495057;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e0e6ed;
+    }
+
+    .info-box {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        border-left: 4px solid #ff9800;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: start;
+        gap: 12px;
+    }
+
+        .info-box i {
+            color: #e65100;
+            font-size: 1.3rem;
+            margin-top: 2px;
+        }
+
+    .info-box-content {
+        flex: 1;
+    }
+
+        .info-box-content strong {
+            display: block;
+            color: #e65100;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-box-content p {
+            margin: 0;
+            color: #ef6c00;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+
+            .page-header h3 {
+                font-size: 1.4rem;
+            }
+
+        .form-card {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .file-upload-area {
+            padding: 1.5rem;
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+        }
+    }
+
+    .btn-submit.loading {
+        pointer-events: none;
+        opacity: 0.7;
+        position: relative;
+    }
+
+        .btn-submit.loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            right: 1rem;
+            margin-top: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spinner 0.6s linear infinite;
+        }
+
+    @@keyframes spinner {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="breadcrumb-custom">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index","Home")">
+                    <i class="fa-solid fa-house"></i> Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("List","Access")">
+                    <i class="fa-solid fa-list-check"></i> Accesos
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file-circle-plus"></i> Subir plantilla
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="page-header">
+    <h3>
+        <i class="fa-solid fa-file-circle-plus"></i>
+        Subir Plantilla PDF
+    </h3>
+    <p>Cargue plantillas oficiales para que los profesores puedan acceder a ellas</p>
+</div>
+
+@if (TempData["err"] != null)
+{
+    <div class="alert-custom alert-danger">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>@TempData["err"]</span>
+    </div>
+}
+@if (TempData["ok"] != null)
+{
+    <div class="alert-custom alert-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>@TempData["ok"]</span>
+    </div>
+}
+
+<div class="info-box">
+    <i class="fa-solid fa-circle-info"></i>
+    <div class="info-box-content">
+        <strong>Informacion importante</strong>
+        <p>Las plantillas son gratuitas o de pago para el profesor segun el precio (CRC) definido en el acceso del profesor a esa especialidad y periodo.</p>
+    </div>
+</div>
+
+<div class="form-card">
+    @using (Html.BeginForm("UploadTemplate", "Files", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-upload", id = "formUpload" }))
+    {
+        <div class="form-section-title">
+            <i class="fa-solid fa-gear"></i>
+            Configuracion de la Plantilla
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Especialidad
+                        <span class="required-mark">*</span>
+                    </label>
+                    @Html.DropDownList("SpecialtyId", (SelectList)ViewBag.SpecialtyId, "-- Seleccione una especialidad --", new { @class = "form-select form-select-custom", required = "required" })
+                    <div class="form-hint">
+                        <i class="fa-regular fa-lightbulb"></i>
+                        Seleccione la especialidad a la que pertenece la plantilla
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        Periodo
+                        <span class="required-mark">*</span>
+                    </label>
+                    @Html.DropDownList("TermId", (SelectList)ViewBag.TermId, "-- Seleccione un periodo --", new { @class = "form-select form-select-custom", required = "required" })
+                    <div class="form-hint">
+                        <i class="fa-regular fa-lightbulb"></i>
+                        Seleccione el periodo lectivo correspondiente
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-regular fa-file-pdf"></i>
+                        Archivo PDF
+                        <span class="required-mark">*</span>
+                    </label>
+                    <div class="file-upload-area" id="uploadArea">
+                        <i class="fa-regular fa-file-pdf file-upload-icon"></i>
+                        <div class="file-upload-text">Haga clic o arrastre un archivo PDF aqui</div>
+                        <div class="file-upload-hint">Solo se aceptan archivos en formato PDF</div>
+                        <input type="file" name="file" class="file-input-hidden" id="fileInput" accept="application/pdf" required />
+                    </div>
+                    <div id="selectedFile" class="selected-file" style="display: none;">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span id="fileName"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit" id="btnSubmit" disabled>
+                <i class="fa-solid fa-upload"></i>
+                Subir Plantilla
+            </button>
+            <a href="@Url.Action("List","Access")" class="btn-cancel">
+                <i class="fa-solid fa-arrow-left"></i>
+                Cancelar
+            </a>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const selectedFile = document.getElementById('selectedFile');
+        const fileName = document.getElementById('fileName');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const formUpload = document.getElementById('formUpload');
+
+        // Click en el area de carga
+        uploadArea.addEventListener('click', function () {
+            fileInput.click();
+        });
+
+        // Cambio de archivo
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                if (file.type === 'application/pdf') {
+                    fileName.textContent = file.name;
+                    selectedFile.style.display = 'flex';
+                    btnSubmit.disabled = false;
+                } else {
+                    alert('Por favor seleccione un archivo PDF valido.');
+                    this.value = '';
+                    selectedFile.style.display = 'none';
+                    btnSubmit.disabled = true;
+                }
+            }
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function () {
+            this.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function (e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'application/pdf') {
+                    fileInput.files = files;
+                    fileName.textContent = file.name;
+                    selectedFile.style.display = 'flex';
+                    btnSubmit.disabled = false;
+                } else {
+                    alert('Por favor seleccione un archivo PDF valido.');
+                }
+            }
+        });
+
+        // Animacion de carga
+        formUpload.addEventListener('submit', function (e) {
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Por favor seleccione un archivo PDF.');
+                return false;
+            }
+            btnSubmit.classList.add('loading');
+            btnSubmit.disabled = true;
+        });
+    });
+</script>

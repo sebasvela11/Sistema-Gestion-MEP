@@ -265,7 +265,7 @@
                 <p class="menu-card-description">
                     Gestione trimestres, semestres y anos lectivos del sistema academico.
                 </p>
-                <a href="@Url.Action("Index","Term")" class="menu-card-btn">
+                <a href="@Url.Action("List","Term")" class="menu-card-btn">
                     Gestionar Periodos
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
@@ -283,6 +283,22 @@
                 </p>
                 <a href="@Url.Action("Create","Access")" class="menu-card-btn">
                     Asignar Accesos
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="menu-card">
+            <div class="menu-card-body">
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                </div>
+                <h5 class="menu-card-title">Subir plantilla</h5>
+                <p class="menu-card-description">
+                    Cargue PDFs oficiales por especialidad y periodo (quedan disponibles para los profesores con acceso)..
+                </p>
+                <a href="@Url.Action("UploadTemplate","Files")#plantillas" class="menu-card-btn">
+                    Ir a subir
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
@@ -328,6 +344,7 @@
                 </a>
             </div>
         </div>
+
     </div>
 }
 
