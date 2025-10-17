@@ -1,0 +1,509 @@
+@model IEnumerable<Sistema_Gestion_MEP.Models.Specialty>
+@{
+    ViewBag.Title = "Especialidades";
+    var q = (string)ViewBag.Query;
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(42, 82, 152, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-header-content h3 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header-content p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.95;
+        font-size: 0.95rem;
+    }
+
+    .btn-create {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+        .btn-create:hover {
+            background: white;
+            color: #2a5298;
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+
+    .breadcrumb-custom {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+        .breadcrumb-custom .breadcrumb {
+            margin: 0;
+            background: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .breadcrumb-custom .breadcrumb-item a:hover {
+                color: #1e3c72;
+            }
+
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+    .search-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+        border: 2px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        padding-left: 2.5rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c757d'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: 0.75rem center;
+        background-size: 1.2rem;
+    }
+
+        .search-input:focus {
+            border-color: #2a5298;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            outline: none;
+        }
+
+    .btn-search {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(42, 82, 152, 0.3);
+    }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.4);
+            color: white;
+        }
+
+    .btn-clear {
+        background: white;
+        color: #6c757d;
+        border: 2px solid #e0e6ed;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .btn-clear:hover {
+            background: #f8f9fa;
+            border-color: #6c757d;
+            color: #495057;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+    .table-custom {
+        margin: 0;
+    }
+
+        .table-custom thead {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+            .table-custom thead th {
+                color: white;
+                font-weight: 600;
+                padding: 1.2rem 1rem;
+                border: none;
+                font-size: 0.95rem;
+                white-space: nowrap;
+            }
+
+                .table-custom thead th i {
+                    margin-right: 6px;
+                    opacity: 0.9;
+                }
+
+        .table-custom tbody td {
+            padding: 1.2rem 1rem;
+            vertical-align: middle;
+            color: #2c3e50;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table-custom tbody tr {
+            transition: all 0.2s ease;
+        }
+
+            .table-custom tbody tr:hover {
+                background: linear-gradient(135deg, rgba(227, 242, 253, 0.5) 0%, rgba(187, 222, 251, 0.3) 100%);
+                transform: scale(1.01);
+            }
+
+            .table-custom tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+    .specialty-name {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .specialty-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2a5298;
+        font-size: 1.2rem;
+    }
+
+    .badge-active {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .badge-inactive {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .badge-date {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1976d2;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .empty-state h5 {
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #adb5bd;
+            margin: 0;
+        }
+
+    .stats-footer {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .stats-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+
+        .stats-item i {
+            color: #2a5298;
+            font-size: 1.2rem;
+        }
+
+        .stats-item strong {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+
+        .page-header-content h3 {
+            font-size: 1.4rem;
+        }
+
+        .search-card {
+            padding: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table-custom {
+            font-size: 0.85rem;
+        }
+
+            .table-custom thead th,
+            .table-custom tbody td {
+                padding: 0.75rem 0.5rem;
+            }
+
+        .specialty-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+
+        .stats-footer {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    @@media (max-width: 576px) {
+        .action-buttons {
+            flex-direction: column;
+        }
+
+            .action-buttons .btn {
+                width: 100%;
+            }
+
+        .btn-create {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="breadcrumb-custom">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index","Home")">
+                    <i class="fa-solid fa-house"></i> Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-layer-group"></i> Especialidades
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="page-header">
+    <div class="page-header-content">
+        <h3>
+            <i class="fa-solid fa-layer-group"></i>
+            Especialidades Técnicas
+        </h3>
+        <p>Gestión de especialidades del MEP</p>
+    </div>
+    <a href="@Url.Action("Create","Specialty")" class="btn-create">
+        <i class="fa-solid fa-plus"></i>
+        Nueva Especialidad
+    </a>
+</div>
+
+<div class="search-card">
+    @using (Html.BeginForm("Index", "Specialty", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
+    {
+        <div class="col-md-8">
+            <input type="text" class="form-control search-input" name="q" value="@q" placeholder="Buscar especialidades por nombre..." />
+        </div>
+        <div class="col-md-4">
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-search flex-grow-1">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Buscar
+                </button>
+                <a href="@Url.Action("Index","Specialty")" class="btn btn-clear">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="table-container">
+    <table class="table table-custom">
+        <thead>
+            <tr>
+                <th><i class="fa-solid fa-layer-group"></i> Especialidad</th>
+                <th><i class="fa-solid fa-toggle-on"></i> Estado</th>
+                <th><i class="fa-regular fa-calendar-plus"></i> Fecha de Creación</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="3">
+                        <div class="empty-state">
+                            <i class="fa-regular fa-folder-open"></i>
+                            <h5>No se encontraron especialidades</h5>
+                            <p>
+                                @if (string.IsNullOrEmpty(q))
+                                {
+                                    <text>No hay especialidades registradas. Comience creando una nueva.</text>
+                                }
+                                else
+                                {
+                                    <text>No hay resultados para "<strong>@q</strong>". Intente con otro término de búsqueda.</text>
+                                }
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var s in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="specialty-name">
+                                <div class="specialty-icon">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                </div>
+                                <span>@s.Name</span>
+                            </div>
+                        </td>
+                        <td>
+                            @if (s.IsActive)
+                            {
+                                <span class="badge-active">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    Activa
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge-inactive">
+                                    <i class="fa-solid fa-circle-xmark"></i>
+                                    Inactiva
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge-date">
+                                <i class="fa-regular fa-calendar"></i>
+                                @s.CreatedAtUtc.ToString("dd/MM/yyyy")
+                            </span>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="stats-footer">
+    <div class="stats-item">
+        <i class="fa-solid fa-chart-simple"></i>
+        <span>Total de especialidades: <strong>@ViewBag.Total</strong></span>
+    </div>
+    @if (!string.IsNullOrEmpty(q))
+    {
+        <div class="stats-item">
+            <i class="fa-solid fa-filter"></i>
+            <span>Filtrando por: <strong>"@q"</strong></span>
+        </div>
+    }
+</div>

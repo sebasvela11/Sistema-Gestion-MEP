@@ -1,0 +1,519 @@
+@model Sistema_Gestion_MEP.Models.SpecialtyAccess
+@{
+    ViewBag.Title = "Asignar acceso";
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(42, 82, 152, 0.2);
+    }
+
+        .page-header h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.95;
+            font-size: 0.95rem;
+        }
+
+    .breadcrumb-custom {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+        .breadcrumb-custom .breadcrumb {
+            margin: 0;
+            background: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .breadcrumb-custom .breadcrumb-item a:hover {
+                color: #1e3c72;
+            }
+
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e0e6ed;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .form-section-title i {
+            color: #2a5298;
+            font-size: 1.3rem;
+        }
+
+    .form-group-custom {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.6rem;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .form-label-custom i {
+            color: #2a5298;
+            font-size: 1rem;
+        }
+
+        .form-label-custom .optional-badge {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1976d2;
+            padding: 0.15rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+    .form-control-custom,
+    .form-select-custom {
+        border: 2px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+    }
+
+        .form-control-custom:focus,
+        .form-select-custom:focus {
+            border-color: #2a5298;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            outline: none;
+        }
+
+    .form-select-custom {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232a5298' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .validation-error i {
+            font-size: 0.9rem;
+        }
+
+    .validation-summary {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border-left: 4px solid #dc3545;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .validation-summary li {
+            color: #721c24;
+            margin: 0.3rem 0;
+        }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e0e6ed;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        border: none;
+        padding: 0.85rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(42, 82, 152, 0.4);
+            color: white;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+    .btn-cancel {
+        background: white;
+        color: #6c757d;
+        border: 2px solid #e0e6ed;
+        padding: 0.85rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-cancel:hover {
+            background: #f8f9fa;
+            border-color: #6c757d;
+            color: #495057;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .info-box {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid #1976d2;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: start;
+        gap: 12px;
+    }
+
+        .info-box i {
+            color: #1976d2;
+            font-size: 1.3rem;
+            margin-top: 2px;
+        }
+
+    .info-box-content {
+        flex: 1;
+    }
+
+        .info-box-content strong {
+            display: block;
+            color: #0d47a1;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-box-content p {
+            margin: 0;
+            color: #1565c0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+    .form-hint {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .form-hint i {
+            font-size: 0.9rem;
+        }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+
+            .page-header h3 {
+                font-size: 1.4rem;
+            }
+
+        .form-card {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Animación para campos requeridos */
+    .form-control-custom:invalid,
+    .form-select-custom:invalid {
+        border-color: #e0e6ed;
+    }
+
+    .form-control-custom:valid,
+    .form-select-custom:valid {
+        border-color: #28a745;
+    }
+
+    /* Efecto de carga en botón submit */
+    .btn-submit.loading {
+        pointer-events: none;
+        opacity: 0.7;
+        position: relative;
+    }
+
+        .btn-submit.loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            right: 1rem;
+            margin-top: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spinner 0.6s linear infinite;
+        }
+
+    @@keyframes spinner {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="breadcrumb-custom">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index","Home")">
+                    <i class="fa-solid fa-house"></i> Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("List","Access")">
+                    <i class="fa-solid fa-list-check"></i> Accesos
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-user-lock"></i> Asignar acceso
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="page-header">
+    <h3>
+        <i class="fa-solid fa-user-lock"></i>
+        Asignar Nuevo Acceso
+    </h3>
+    <p>Complete el formulario para otorgar acceso a un profesor</p>
+</div>
+
+<div class="info-box">
+    <i class="fa-solid fa-circle-info"></i>
+    <div class="info-box-content">
+        <strong>Información importante</strong>
+        <p>Al asignar un acceso, el profesor podrá visualizar y descargar las plantillas correspondientes a la especialidad y periodo seleccionados. La fecha límite es opcional.</p>
+    </div>
+</div>
+
+<div class="form-card">
+    @using (Html.BeginForm("Create", "Access", FormMethod.Post, new { @class = "form-access", id = "formAccess" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+
+        <div class="form-section-title">
+            <i class="fa-solid fa-user-gear"></i>
+            Datos del Acceso
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        Profesor
+                    </label>
+                    @Html.DropDownListFor(m => m.UserId, (SelectList)ViewBag.UserId, "-- Seleccione un profesor --", new { @class = "form-select form-select-custom", required = "required" })
+                    @Html.ValidationMessageFor(m => m.UserId, "", new { @class = "validation-error" })
+                    <div class="form-hint">
+                        <i class="fa-regular fa-lightbulb"></i>
+                        Seleccione el profesor que tendrá acceso
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Especialidad
+                    </label>
+                    @Html.DropDownListFor(m => m.SpecialtyId, (SelectList)ViewBag.SpecialtyId, "-- Seleccione una especialidad --", new { @class = "form-select form-select-custom", required = "required" })
+                    @Html.ValidationMessageFor(m => m.SpecialtyId, "", new { @class = "validation-error" })
+                    <div class="form-hint">
+                        <i class="fa-regular fa-lightbulb"></i>
+                        Especialidad a la que se dará acceso
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        Periodo Lectivo
+                    </label>
+                    @Html.DropDownListFor(m => m.TermId, (SelectList)ViewBag.TermId, "-- Seleccione un periodo --", new { @class = "form-select form-select-custom", required = "required" })
+                    @Html.ValidationMessageFor(m => m.TermId, "", new { @class = "validation-error" })
+                    <div class="form-hint">
+                        <i class="fa-regular fa-lightbulb"></i>
+                        Periodo académico del acceso
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-regular fa-calendar-xmark"></i>
+                        Fecha Límite
+                        <span class="optional-badge">Opcional</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.DeadlineUtc, "{0:yyyy-MM-dd}", new { @class = "form-control form-control-custom", type = "date", placeholder = "Seleccione una fecha" })
+                    <div class="form-hint">
+                        <i class="fa-regular fa-lightbulb"></i>
+                        Si no se especifica, el acceso no tendrá límite de tiempo
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Guardar Acceso
+            </button>
+            <a href="@Url.Action("List","Access")" class="btn-cancel">
+                <i class="fa-solid fa-arrow-left"></i>
+                Cancelar
+            </a>
+        </div>
+    }
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Animación de carga en el botón submit
+            $('#formAccess').on('submit', function (e) {
+                var form = $(this);
+                if (form.valid()) {
+                    $('#btnSubmit').addClass('loading');
+                }
+            });
+
+            // Mejorar mensajes de validación
+            $('input, select').on('invalid', function (e) {
+                e.preventDefault();
+                $(this).addClass('is-invalid');
+            });
+
+            $('input, select').on('input change', function () {
+                if (this.validity.valid) {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
+            // Validar que la fecha límite sea futura
+            $('input[type="date"]').on('change', function () {
+                var selectedDate = new Date($(this).val());
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate < today) {
+                    alert('La fecha límite debe ser igual o posterior a la fecha actual.');
+                    $(this).val('');
+                }
+            });
+
+            // Confirmar antes de enviar
+            $('#formAccess').on('submit', function (e) {
+                if ($(this).valid()) {
+                    var profesor = $('#UserId option:selected').text();
+                    var especialidad = $('#SpecialtyId option:selected').text();
+                    var periodo = $('#TermId option:selected').text();
+
+                    if (profesor === '-- Seleccione un profesor --' ||
+                        especialidad === '-- Seleccione una especialidad --' ||
+                        periodo === '-- Seleccione un periodo --') {
+                        return true; // Dejar que la validación de HTML5 maneje esto
+                    }
+
+                    var mensaje = '¿Está seguro de asignar el siguiente acceso?\n\n';
+                    mensaje += 'Profesor: ' + profesor + '\n';
+                    mensaje += 'Especialidad: ' + especialidad + '\n';
+                    mensaje += 'Periodo: ' + periodo;
+
+                    if (!confirm(mensaje)) {
+                        e.preventDefault();
+                        $('#btnSubmit').removeClass('loading');
+                        return false;
+                    }
+                }
+            });
+        });
+    </script>
+}

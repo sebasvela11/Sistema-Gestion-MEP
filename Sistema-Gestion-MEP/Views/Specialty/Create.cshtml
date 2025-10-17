@@ -1,0 +1,598 @@
+@model Sistema_Gestion_MEP.Models.Specialty
+@{
+    ViewBag.Title = "Nueva especialidad";
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(42, 82, 152, 0.2);
+    }
+
+        .page-header h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.95;
+            font-size: 0.95rem;
+        }
+
+    .breadcrumb-custom {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+        .breadcrumb-custom .breadcrumb {
+            margin: 0;
+            background: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .breadcrumb-custom .breadcrumb-item a:hover {
+                color: #1e3c72;
+            }
+
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e0e6ed;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .form-section-title i {
+            color: #2a5298;
+            font-size: 1.3rem;
+        }
+
+    .form-group-custom {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.6rem;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .form-label-custom i {
+            color: #2a5298;
+            font-size: 1rem;
+        }
+
+    .required-mark {
+        color: #dc3545;
+        font-weight: 700;
+        margin-left: 4px;
+    }
+
+    .form-control-custom {
+        border: 2px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.85rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+    }
+
+        .form-control-custom:focus {
+            border-color: #2a5298;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            outline: none;
+        }
+
+    .form-hint {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .form-hint i {
+            font-size: 0.9rem;
+        }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .validation-error i {
+            font-size: 0.9rem;
+        }
+
+    .validation-summary {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border-left: 4px solid #dc3545;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+        .validation-summary strong {
+            color: #721c24;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: #721c24;
+        }
+
+    .switch-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 2px solid #e0e6ed;
+    }
+
+    .switch-label {
+        font-weight: 600;
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+
+        .switch-label.active {
+            color: #28a745;
+        }
+
+    .custom-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+        .custom-switch .switch-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+            margin: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 30px;
+        pointer-events: none;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+    .custom-switch .switch-input:checked ~ .slider {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+
+        .custom-switch .switch-input:checked ~ .slider:before {
+            transform: translateX(30px);
+        }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e0e6ed;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        border: none;
+        padding: 0.85rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(42, 82, 152, 0.4);
+            color: white;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+    .btn-cancel {
+        background: white;
+        color: #6c757d;
+        border: 2px solid #e0e6ed;
+        padding: 0.85rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-cancel:hover {
+            background: #f8f9fa;
+            border-color: #6c757d;
+            color: #495057;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .info-box {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        border-left: 4px solid #ff9800;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: start;
+        gap: 12px;
+    }
+
+        .info-box i {
+            color: #e65100;
+            font-size: 1.3rem;
+            margin-top: 2px;
+        }
+
+    .info-box-content {
+        flex: 1;
+    }
+
+        .info-box-content strong {
+            display: block;
+            color: #e65100;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-box-content p {
+            margin: 0;
+            color: #ef6c00;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+    .char-counter {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-align: right;
+        margin-top: 0.3rem;
+    }
+
+        .char-counter.warning {
+            color: #ff9800;
+            font-weight: 600;
+        }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+
+            .page-header h3 {
+                font-size: 1.4rem;
+            }
+
+        .form-card {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .toggle-wrapper {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    .btn-submit.loading {
+        pointer-events: none;
+        opacity: 0.7;
+        position: relative;
+    }
+
+        .btn-submit.loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            right: 1rem;
+            margin-top: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spinner 0.6s linear infinite;
+        }
+
+    @@keyframes spinner {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="breadcrumb-custom">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index","Home")">
+                    <i class="fa-solid fa-house"></i> Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index","Specialty")">
+                    <i class="fa-solid fa-layer-group"></i> Especialidades
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-plus"></i> Nueva
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="page-header">
+    <h3>
+        <i class="fa-solid fa-plus"></i>
+        Nueva Especialidad
+    </h3>
+    <p>Complete la información para crear una nueva especialidad técnica</p>
+</div>
+
+<div class="info-box">
+    <i class="fa-solid fa-lightbulb"></i>
+    <div class="info-box-content">
+        <strong>Consejo</strong>
+        <p>Asegúrese de que el nombre de la especialidad sea claro y específico. Este será visible para todos los profesores con acceso al sistema.</p>
+    </div>
+</div>
+
+<div class="form-card">
+    @using (Html.BeginForm("Create", "Specialty", FormMethod.Post, new { @class = "form-specialty", id = "formSpecialty" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+
+        <div class="form-section-title">
+            <i class="fa-solid fa-file-signature"></i>
+            Información de la Especialidad
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        Nombre de la Especialidad
+                        <span class="required-mark">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.Name, new
+                    {
+                        @class = "form-control form-control-custom",
+                        placeholder = "Ej: Contabilidad y Finanzas",
+                        maxlength = "120",
+                        autofocus = "autofocus",
+                        required = "required",
+                        id = "nameInput"
+                    })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "validation-error" })
+                    <div class="form-hint">
+                        <i class="fa-regular fa-lightbulb"></i>
+                        Ingrese un nombre descriptivo para la especialidad
+                    </div>
+                    <div class="char-counter" id="charCounter">0 / 120 caracteres</div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="form-group-custom">
+                    <label class="form-label-custom">
+                        <i class="fa-solid fa-toggle-on"></i>
+                        Estado
+                    </label>
+                    <div class="switch-container">
+                        <label class="custom-switch">
+                            <input type="checkbox" name="IsActive" id="chkActive" value="true" class="switch-input" />
+                            <input type="hidden" name="IsActive" value="false" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-label" id="switchLabel">Inactiva</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Guardar Especialidad
+            </button>
+            <a href="@Url.Action("Index","Specialty")" class="btn-cancel">
+                <i class="fa-solid fa-arrow-left"></i>
+                Cancelar
+            </a>
+        </div>
+    }
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Actualizar label del switch
+            function updateSwitchLabel() {
+                var isChecked = $('#chkActive').is(':checked');
+                var label = $('#switchLabel');
+
+                if (isChecked) {
+                    label.text('Activa').addClass('active');
+                } else {
+                    label.text('Inactiva').removeClass('active');
+                }
+            }
+
+            $('#chkActive').on('change', updateSwitchLabel);
+            updateSwitchLabel();
+
+            // Contador de caracteres
+            var nameInput = $('#nameInput');
+            var charCounter = $('#charCounter');
+
+            function updateCharCounter() {
+                var length = nameInput.val().length;
+                charCounter.text(length + ' / 120 caracteres');
+
+                if (length > 100) {
+                    charCounter.addClass('warning');
+                } else {
+                    charCounter.removeClass('warning');
+                }
+            }
+
+            nameInput.on('input', updateCharCounter);
+            updateCharCounter();
+
+            // Capitalizar primera letra automáticamente
+            nameInput.on('blur', function () {
+                var value = $(this).val();
+                if (value.length > 0) {
+                    $(this).val(value.charAt(0).toUpperCase() + value.slice(1));
+                }
+            });
+
+            // Animación de carga en el botón submit
+            $('#formSpecialty').on('submit', function (e) {
+                var form = $(this);
+                if (form.valid()) {
+                    $('#btnSubmit').addClass('loading');
+                }
+            });
+
+            // Confirmar antes de enviar
+            $('#formSpecialty').on('submit', function (e) {
+                if ($(this).valid()) {
+                    var nombre = $('#nameInput').val();
+                    var activa = $('#chkActive').is(':checked') ? 'Sí' : 'No';
+
+                    var mensaje = '¿Está seguro de crear la siguiente especialidad?\n\n';
+                    mensaje += 'Nombre: ' + nombre + '\n';
+                    mensaje += 'Activa: ' + activa;
+
+                    if (!confirm(mensaje)) {
+                        e.preventDefault();
+                        $('#btnSubmit').removeClass('loading');
+                        return false;
+                    }
+                }
+            });
+
+            // Validación personalizada
+            $.validator.addMethod('noSpecialCharsStart', function (value, element) {
+                return this.optional(element) || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(value);
+            }, 'El nombre debe comenzar con una letra');
+
+            $('#formSpecialty').validate({
+                rules: {
+                    Name: {
+                        required: true,
+                        minlength: 3,
+                        noSpecialCharsStart: true
+                    }
+                },
+                messages: {
+                    Name: {
+                        required: "El nombre de la especialidad es obligatorio",
+                        minlength: "El nombre debe tener al menos 3 caracteres"
+                    }
+                }
+            });
+        });
+    </script>
+}
