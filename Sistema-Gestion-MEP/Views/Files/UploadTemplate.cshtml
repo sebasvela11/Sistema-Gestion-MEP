@@ -1,3 +1,8 @@
+@using System.Web.Mvc
+@using System.Web.Mvc.Html
+@using System.Web.Optimization
+@using System.Web.Routing
+@using Sistema_Gestion_MEP.Models
 @{
     ViewBag.Title = "Subir plantilla";
 }
@@ -132,6 +137,16 @@
             color: #2a5298;
             font-size: 1rem;
         }
+
+    .optional-badge {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1976d2;
+        padding: 0.15rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-left: auto;
+    }
 
     .required-mark {
         color: #dc3545;
@@ -298,8 +313,8 @@
     }
 
     .info-box {
-        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-        border-left: 4px solid #ff9800;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid #1976d2;
         border-radius: 8px;
         padding: 1rem 1.2rem;
         margin-bottom: 1.5rem;
@@ -309,7 +324,7 @@
     }
 
         .info-box i {
-            color: #e65100;
+            color: #1976d2;
             font-size: 1.3rem;
             margin-top: 2px;
         }
@@ -320,15 +335,65 @@
 
         .info-box-content strong {
             display: block;
-            color: #e65100;
+            color: #0d47a1;
             margin-bottom: 0.3rem;
         }
 
         .info-box-content p {
             margin: 0;
-            color: #ef6c00;
+            color: #1565c0;
             font-size: 0.9rem;
             line-height: 1.5;
+        }
+
+    .price-options {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.75rem;
+    }
+
+    .price-option {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #e0e6ed;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+        .price-option:hover {
+            border-color: #2a5298;
+            background-color: rgba(42, 82, 152, 0.05);
+        }
+
+        .price-option.active {
+            border-color: #2a5298;
+            background: linear-gradient(135deg, rgba(227, 242, 253, 0.5) 0%, rgba(187, 222, 251, 0.3) 100%);
+        }
+
+        .price-option input[type="radio"] {
+            margin-right: 8px;
+        }
+
+        .price-option label {
+            font-weight: 600;
+            color: #2c3e50;
+            cursor: pointer;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+    .price-input-wrapper {
+        margin-top: 1rem;
+        display: none;
+    }
+
+        .price-input-wrapper.active {
+            display: block;
         }
 
     @@media (max-width: 768px) {
@@ -360,6 +425,10 @@
 
         .file-upload-icon {
             font-size: 2rem;
+        }
+
+        .price-options {
+            flex-direction: column;
         }
     }
 
@@ -415,7 +484,7 @@
         <i class="fa-solid fa-file-circle-plus"></i>
         Subir Plantilla PDF
     </h3>
-    <p>Cargue plantillas oficiales para que los profesores puedan acceder a ellas</p>
+    <p>Cargue plantillas oficiales con precio opcional para que los profesores puedan acceder a ellas</p>
 </div>
 
 @if (TempData["err"] != null)
@@ -437,7 +506,7 @@
     <i class="fa-solid fa-circle-info"></i>
     <div class="info-box-content">
         <strong>Informacion importante</strong>
-        <p>Las plantillas son gratuitas o de pago para el profesor segun el precio (CRC) definido en el acceso del profesor a esa especialidad y periodo.</p>
+        <p>Puede definir si el documento es gratuito o de pago. Los profesores con acceso a la especialidad y periodo podran ver todos los documentos, pero solo podran descargar los gratuitos o aquellos que hayan pagado.</p>
     </div>
 </div>
 
@@ -450,32 +519,54 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-6">
+            <div class="col-12">
                 <div class="form-group-custom">
                     <label class="form-label-custom">
-                        <i class="fa-solid fa-layer-group"></i>
-                        Especialidad
+                        <i class="fa-solid fa-user-lock"></i>
+                        Acceso (Profesor - Especialidad - Periodo)
                         <span class="required-mark">*</span>
                     </label>
-                    @Html.DropDownList("SpecialtyId", (SelectList)ViewBag.SpecialtyId, "-- Seleccione una especialidad --", new { @class = "form-select form-select-custom", required = "required" })
+                    @Html.DropDownList("SpecialtyAccessId", (SelectList)ViewBag.SpecialtyAccessId, "-- Seleccione un acceso --", new { @class = "form-select form-select-custom", required = "required" })
                     <div class="form-hint">
                         <i class="fa-regular fa-lightbulb"></i>
-                        Seleccione la especialidad a la que pertenece la plantilla
+                        Seleccione el acceso al que pertenecera este documento
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-12">
                 <div class="form-group-custom">
                     <label class="form-label-custom">
-                        <i class="fa-regular fa-calendar-days"></i>
-                        Periodo
-                        <span class="required-mark">*</span>
+                        <i class="fa-solid fa-coins"></i>
+                        Precio del Documento
                     </label>
-                    @Html.DropDownList("TermId", (SelectList)ViewBag.TermId, "-- Seleccione un periodo --", new { @class = "form-select form-select-custom", required = "required" })
-                    <div class="form-hint">
-                        <i class="fa-regular fa-lightbulb"></i>
-                        Seleccione el periodo lectivo correspondiente
+                    <div class="price-options">
+                        <div class="price-option active" id="optionFree">
+                            <label>
+                                <input type="radio" name="PriceType" value="free" checked />
+                                <i class="fa-solid fa-gift"></i>
+                                Gratuito
+                            </label>
+                        </div>
+                        <div class="price-option" id="optionPaid">
+                            <label>
+                                <input type="radio" name="PriceType" value="paid" />
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                                De Pago
+                            </label>
+                        </div>
+                    </div>
+                    <div class="price-input-wrapper" id="priceInputWrapper">
+                        <label class="form-label-custom" style="margin-top: 1rem;">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                            Monto en Colones (CRC)
+                        </label>
+                        <input type="number" name="PriceCRC" id="PriceCRC" class="form-control form-control-custom"
+                               placeholder="Ejemplo: 5000" min="0" step="0.01" />
+                        <div class="form-hint">
+                            <i class="fa-regular fa-lightbulb"></i>
+                            Ingrese el precio en colones que debera pagar el profesor
+                        </div>
                     </div>
                 </div>
             </div>
@@ -522,6 +613,32 @@
         const fileName = document.getElementById('fileName');
         const btnSubmit = document.getElementById('btnSubmit');
         const formUpload = document.getElementById('formUpload');
+
+        // Opciones de precio
+        const optionFree = document.getElementById('optionFree');
+        const optionPaid = document.getElementById('optionPaid');
+        const priceInputWrapper = document.getElementById('priceInputWrapper');
+        const priceCRCInput = document.getElementById('PriceCRC');
+        const radioFree = document.querySelector('input[value="free"]');
+        const radioPaid = document.querySelector('input[value="paid"]');
+
+        // Manejo de opciones de precio
+        optionFree.addEventListener('click', function () {
+            radioFree.checked = true;
+            optionFree.classList.add('active');
+            optionPaid.classList.remove('active');
+            priceInputWrapper.classList.remove('active');
+            priceCRCInput.value = '';
+            priceCRCInput.removeAttribute('required');
+        });
+
+        optionPaid.addEventListener('click', function () {
+            radioPaid.checked = true;
+            optionPaid.classList.add('active');
+            optionFree.classList.remove('active');
+            priceInputWrapper.classList.add('active');
+            priceCRCInput.setAttribute('required', 'required');
+        });
 
         // Click en el area de carga
         uploadArea.addEventListener('click', function () {
@@ -573,13 +690,24 @@
             }
         });
 
-        // Animacion de carga
+        // Validacion antes de enviar
         formUpload.addEventListener('submit', function (e) {
             if (!fileInput.files || fileInput.files.length === 0) {
                 e.preventDefault();
                 alert('Por favor seleccione un archivo PDF.');
                 return false;
             }
+
+            // Validar precio si es de pago
+            if (radioPaid.checked) {
+                const priceValue = parseFloat(priceCRCInput.value);
+                if (isNaN(priceValue) || priceValue <= 0) {
+                    e.preventDefault();
+                    alert('Por favor ingrese un precio valido mayor a 0.');
+                    return false;
+                }
+            }
+
             btnSubmit.classList.add('loading');
             btnSubmit.disabled = true;
         });

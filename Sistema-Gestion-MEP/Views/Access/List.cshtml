@@ -1,9 +1,10 @@
-﻿@model IEnumerable<Sistema_Gestion_MEP.Controllers.AccessListViewModel>
+﻿@using System.Web.Mvc
+@using System.Web.Mvc.Html
+@model IEnumerable<Sistema_Gestion_MEP.Controllers.AccessListViewModel>
 
 @{
     ViewBag.Title = "Accesos";
 
-    // Calcular total sin LINQ
     bool hasItems = false;
     int total = 0;
     if (Model != null)
@@ -102,8 +103,8 @@
         }
 
     .info-box {
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        border-left: 4px solid #1976d2;
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        border-left: 4px solid #2e7d32;
         border-radius: 8px;
         padding: 1rem 1.2rem;
         margin-bottom: 1.5rem;
@@ -113,7 +114,7 @@
     }
 
         .info-box i {
-            color: #1976d2;
+            color: #2e7d32;
             font-size: 1.3rem;
             margin-top: 2px;
         }
@@ -124,13 +125,13 @@
 
         .info-box-content strong {
             display: block;
-            color: #0d47a1;
+            color: #1b5e20;
             margin-bottom: 0.3rem;
         }
 
         .info-box-content p {
             margin: 0;
-            color: #1565c0;
+            color: #2e7d32;
             font-size: 0.9rem;
             line-height: 1.5;
         }
@@ -148,7 +149,7 @@
     }
 
         .table-custom thead {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
 
             .table-custom thead th {
@@ -177,7 +178,7 @@
         }
 
             .table-custom tbody tr:hover {
-                background: linear-gradient(135deg, rgba(227, 242, 253, 0.5) 0%, rgba(187, 222, 251, 0.3) 100%);
+                background: linear-gradient(135deg, rgba(232, 245, 233, 0.5) 0%, rgba(200, 230, 201, 0.3) 100%);
                 transform: scale(1.01);
             }
 
@@ -265,23 +266,17 @@
             color: #6c757d;
         }
 
-    .price-display {
+    .access-free-badge {
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        color: #2e7d32;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
         font-weight: 700;
-        font-size: 1rem;
-    }
-
-    .price-free {
-        color: #28a745;
-        display: flex;
+        font-size: 0.9rem;
+        display: inline-flex;
         align-items: center;
-        gap: 6px;
-    }
-
-    .price-paid {
-        color: #2a5298;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        gap: 8px;
+        border: 2px solid #a5d6a7;
     }
 
     .empty-state {
@@ -394,7 +389,7 @@
             <i class="fa-solid fa-user-lock"></i>
             Control de Accesos
         </h3>
-        <p>Gestion de permisos por profesor, especialidad y periodo</p>
+        <p>Gestion de permisos gratuitos por profesor, especialidad y periodo</p>
     </div>
     <a href="@Url.Action("Create","Access")" class="btn-create">
         <i class="fa-solid fa-plus"></i>
@@ -403,10 +398,10 @@
 </div>
 
 <div class="info-box">
-    <i class="fa-solid fa-circle-info"></i>
+    <i class="fa-solid fa-gift"></i>
     <div class="info-box-content">
-        <strong>Informacion sobre accesos</strong>
-        <p>Los accesos otorgan permisos a profesores para visualizar y descargar plantillas. El precio determina si las plantillas son gratuitas o de pago para el profesor.</p>
+        <strong>Accesos Gratuitos</strong>
+        <p>Los accesos otorgan permisos gratuitos a profesores para visualizar documentos de una especialidad y periodo. Los documentos individuales pueden ser gratuitos o de pago según lo defina el coordinador al subirlos.</p>
     </div>
 </div>
 
@@ -419,8 +414,8 @@
                 <th><i class="fa-solid fa-layer-group"></i> Especialidad</th>
                 <th><i class="fa-regular fa-calendar-days"></i> Periodo</th>
                 <th><i class="fa-solid fa-calendar-check"></i> Fecha Acceso</th>
-                <th><i class="fa-solid fa-calendar-xmark"></i> Fecha Limite</th>
-                <th><i class="fa-solid fa-coins"></i> Precio CRC</th>
+                <th><i class="fa-solid fa-calendar-xmark"></i> Fecha Límite</th>
+                <th><i class="fa-solid fa-circle-check"></i> Estado</th>
             </tr>
         </thead>
         <tbody>
@@ -431,7 +426,7 @@
                         <div class="empty-state">
                             <i class="fa-solid fa-user-lock"></i>
                             <h5>No hay accesos registrados</h5>
-                            <p>Comience asignando accesos a los profesores para que puedan visualizar plantillas.</p>
+                            <p>Comience asignando accesos gratuitos a los profesores para que puedan visualizar documentos.</p>
                         </div>
                     </td>
                 </tr>
@@ -485,25 +480,15 @@
                             {
                                 <div class="date-display no-deadline">
                                     <i class="fa-solid fa-infinity"></i>
-                                    Sin limite
+                                    Sin límite
                                 </div>
                             }
                         </td>
                         <td>
-                            @if (item.PriceCRC.HasValue && item.PriceCRC.Value > 0)
-                            {
-                                <div class="price-display price-paid">
-                                    <i class="fa-solid fa-money-bill-wave"></i>
-                                    ₡@String.Format("{0:N0}", item.PriceCRC.Value)
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="price-display price-free">
-                                    <i class="fa-solid fa-gift"></i>
-                                    Gratis
-                                </div>
-                            }
+                            <span class="access-free-badge">
+                                <i class="fa-solid fa-gift"></i>
+                                ACCESO GRATIS
+                            </span>
                         </td>
                     </tr>
                 }
@@ -519,6 +504,6 @@
     </div>
     <div class="stats-item">
         <i class="fa-solid fa-info-circle"></i>
-        <span>Los accesos permiten a los profesores acceder a plantillas especificas</span>
+        <span>Todos los accesos son gratuitos. Los profesores pueden encontrar documentos gratuitos y de pago dentro de cada acceso.</span>
     </div>
 </div>

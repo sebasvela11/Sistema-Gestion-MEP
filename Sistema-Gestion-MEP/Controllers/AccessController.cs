@@ -31,13 +31,8 @@ namespace Sistema_Gestion_MEP.Controllers
                     Periodo = a.Term.Label + " " + a.Term.Year,
                     FechaAcceso = a.AccessGrantedUtc,
                     FechaLimite = a.DeadlineUtc,
-
-                    // Para acciones por fila
                     SpecialtyId = a.SpecialtyId,
-                    TermId = a.TermId,
-
-                    // NUEVO: mostrar precio del acceso
-                    PriceCRC = a.PriceCRC
+                    TermId = a.TermId
                 })
                 .OrderByDescending(a => a.FechaAcceso)
                 .ToList();
@@ -60,7 +55,6 @@ namespace Sistema_Gestion_MEP.Controllers
         public ActionResult Create()
         {
             PopulateSelects();
-            // PriceCRC se puede dejar null (gratis) o con un valor en colones
             return View(new SpecialtyAccess());
         }
 
@@ -68,9 +62,6 @@ namespace Sistema_Gestion_MEP.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Create(SpecialtyAccess model)
         {
-            if (model.PriceCRC.HasValue && model.PriceCRC.Value < 0)
-                ModelState.AddModelError("PriceCRC", "El precio no puede ser negativo.");
-
             if (!ModelState.IsValid)
             {
                 PopulateSelects(model.UserId, model.SpecialtyId, model.TermId);
@@ -90,12 +81,12 @@ namespace Sistema_Gestion_MEP.Controllers
                 return View(model);
             }
 
-            // Guardar: si PriceCRC es null o 0 => descarga libre
+            // Guardar acceso (sin precio - es gratis)
             model.AccessGrantedUtc = DateTime.UtcNow;
             db.SpecialtyAccesses.Add(model);
             db.SaveChanges();
 
-            TempData["ok"] = "Acceso creado correctamente.";
+            TempData["ok"] = "Acceso creado correctamente. El profesor podrá visualizar documentos gratuitos y de pago.";
             return RedirectToAction("List");
         }
 
@@ -135,12 +126,7 @@ namespace Sistema_Gestion_MEP.Controllers
         public string Periodo { get; set; }
         public DateTime FechaAcceso { get; set; }
         public DateTime? FechaLimite { get; set; }
-
-        // Acciones por fila
         public int SpecialtyId { get; set; }
         public int TermId { get; set; }
-
-        // NUEVO: precio por acceso (null/0 = gratis)
-        public decimal? PriceCRC { get; set; }
     }
 }

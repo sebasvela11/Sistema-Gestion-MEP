@@ -7,21 +7,20 @@ namespace Sistema_Gestion_MEP.Models
     {
         public int Id { get; set; }
 
-        // 1 = Plantilla, 2 = Entrega
         public int Type { get; set; }
 
-        // Para entrega: dueño del archivo (profesor)
-        public string OwnerUserId { get; set; }    // <-- Identity user (solo para Type=2)
-        public int SpecialtyId { get; set; }
-        public int TermId { get; set; }
+        public string OwnerUserId { get; set; }
+
+        public int SpecialtyAccessId { get; set; }
 
         public string FileName { get; set; }
         public string StoredPath { get; set; }
         public long FileSizeBytes { get; set; }
         public DateTime UploadedAtUtc { get; set; }
-        public DateTime? DeadlineUtc { get; set; } // opcional
+        public DateTime? DeadlineUtc { get; set; }
 
-        public virtual Specialty Specialty { get; set; }
-        public virtual Term Term { get; set; }
+        public decimal? PriceCRC { get; set; }
+
+        public virtual SpecialtyAccess SpecialtyAccess { get; set; }
     }
 }

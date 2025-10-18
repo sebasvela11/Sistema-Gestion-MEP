@@ -13,9 +13,6 @@ namespace Sistema_Gestion_MEP.Models
         public DateTime AccessGrantedUtc { get; set; }
         public DateTime? DeadlineUtc { get; set; }
 
-
-        public decimal? PriceCRC { get; set; }
-
         public virtual ApplicationUser User { get; set; }
         public virtual Specialty Specialty { get; set; }
         public virtual Term Term { get; set; }

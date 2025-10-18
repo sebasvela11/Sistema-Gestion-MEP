@@ -22,39 +22,55 @@ namespace Sistema_Gestion_MEP.Controllers
         [Authorize(Roles = "Coordinador")]
         public ActionResult UploadTemplate(int? specialtyId, int? termId)
         {
-            ViewBag.SpecialtyId = new SelectList(
-                _db.Specialties.OrderBy(s => s.Name), "Id", "Name", specialtyId
-            );
-
-            // Mostramos "2025 - I Trimestre"
-            var termItems = _db.Terms
-                .OrderBy(t => t.Year).ThenBy(t => t.OrderInYear)
-                .Select(t => new { t.Id, Label = t.Year + " - " + t.Label })
+            // Obtener accesos existentes para seleccionar
+            var accesos = _db.SpecialtyAccesses
+                .Select(a => new
+                {
+                    a.Id,
+                    Label = a.Specialty.Name + " - " + a.Term.Label + " " + a.Term.Year + " - " + a.User.Email
+                })
+                .OrderBy(a => a.Label)
                 .ToList();
-            ViewBag.TermId = new SelectList(termItems, "Id", "Label", termId);
+
+            ViewBag.SpecialtyAccessId = new SelectList(accesos, "Id", "Label");
 
             return View();
         }
 
         [HttpPost, Authorize(Roles = "Coordinador"), ValidateAntiForgeryToken]
-        public ActionResult UploadTemplate(int SpecialtyId, int TermId, HttpPostedFileBase file)
+        public ActionResult UploadTemplate(int SpecialtyAccessId, decimal? PriceCRC, HttpPostedFileBase file)
         {
             if (file == null || file.ContentLength == 0)
             {
                 TempData["err"] = "Debe seleccionar un archivo PDF.";
-                return RedirectToAction("UploadTemplate", new { specialtyId = SpecialtyId, termId = TermId });
+                return RedirectToAction("UploadTemplate");
             }
 
             if (!IsPdf(file))
             {
                 TempData["err"] = "Solo se permiten archivos PDF.";
-                return RedirectToAction("UploadTemplate", new { specialtyId = SpecialtyId, termId = TermId });
+                return RedirectToAction("UploadTemplate");
+            }
+
+            // Validar precio
+            if (PriceCRC.HasValue && PriceCRC.Value < 0)
+            {
+                TempData["err"] = "El precio no puede ser negativo.";
+                return RedirectToAction("UploadTemplate");
+            }
+
+            // Verificar que el acceso existe
+            var access = _db.SpecialtyAccesses.Find(SpecialtyAccessId);
+            if (access == null)
+            {
+                TempData["err"] = "El acceso seleccionado no existe.";
+                return RedirectToAction("UploadTemplate");
             }
 
             // Asegurar directorio
             EnsureDir(TEMPLATES_DIR);
 
-            // Nombre único para evitar colisiones
+            // Nombre unico para evitar colisiones
             var originalName = Path.GetFileName(file.FileName);
             var safeName = MakeSafeFileName(originalName);
             var uniqueName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{safeName}";
@@ -67,20 +83,26 @@ namespace Sistema_Gestion_MEP.Controllers
             {
                 Type = 1, // Plantilla
                 OwnerUserId = null, // plantillas no tienen owner
-                SpecialtyId = SpecialtyId,
-                TermId = TermId,
+                SpecialtyAccessId = SpecialtyAccessId,
                 FileName = originalName,
-                StoredPath = relPath,           // guardamos ruta virtual relativa
+                StoredPath = relPath,
                 FileSizeBytes = file.ContentLength,
-                UploadedAtUtc = DateTime.UtcNow
+                UploadedAtUtc = DateTime.UtcNow,
+                PriceCRC = PriceCRC // null = gratis, > 0 = de pago
             };
 
             _db.Documents.Add(doc);
             _db.SaveChanges();
 
-            LogActivity("Upload", "Document", doc.Id.ToString(), $"Plantilla {originalName} subida", success: true);
+            var priceText = PriceCRC.HasValue && PriceCRC.Value > 0
+                ? $" (Precio: ₡{PriceCRC.Value:N0})"
+                : " (Gratis)";
+            LogActivity("Upload", "Document", doc.Id.ToString(), $"Plantilla {originalName}{priceText}", success: true);
 
-            TempData["ok"] = "Plantilla subida correctamente.";
+            TempData["ok"] = PriceCRC.HasValue && PriceCRC.Value > 0
+                ? $"Plantilla subida correctamente. Precio: ₡{PriceCRC.Value:N0}"
+                : "Plantilla subida correctamente. Documento gratuito.";
+
             return RedirectToAction("List", "Access");
         }
 
@@ -102,11 +124,10 @@ namespace Sistema_Gestion_MEP.Controllers
             {
                 if (!User.IsInRole("Coordinador"))
                 {
-                    // Debe tener acceso a esa especialidad/periodo
+                    // Verificar que el documento pertenece a un acceso del usuario
                     var access = _db.SpecialtyAccesses.FirstOrDefault(a =>
-                        a.UserId == userId &&
-                        a.SpecialtyId == doc.SpecialtyId &&
-                        a.TermId == doc.TermId);
+                        a.Id == doc.SpecialtyAccessId &&
+                        a.UserId == userId);
 
                     if (access == null)
                     {
@@ -115,25 +136,25 @@ namespace Sistema_Gestion_MEP.Controllers
                         return RedirectToAction("Index", "Profesor");
                     }
 
-                    // REGLA DE PRECIO:
-                    // - Gratis si PriceCRC es null o <= 0
-                    // - Si PriceCRC > 0, requiere PaymentSimulation en estado "Paid"
-                    var price = access.PriceCRC ?? 0m;
+                    // REGLA DE PRECIO (DESDE DOCUMENTO):
+                    // - Gratis si doc.PriceCRC es null o <= 0
+                    // - Si doc.PriceCRC > 0, requiere PaymentSimulation con DocumentId en estado "Paid"
+                    var price = doc.PriceCRC ?? 0m;
                     if (price > 0m)
                     {
                         var payment = _db.PaymentSimulations.FirstOrDefault(p =>
                             p.UserId == userId &&
-                            p.SpecialtyId == doc.SpecialtyId &&
-                            p.TermId == doc.TermId);
+                            p.DocumentId == doc.Id &&
+                            p.PaymentType == "Document");
 
                         var paid = payment != null &&
                                    string.Equals(payment.Status, "Paid", StringComparison.OrdinalIgnoreCase);
 
                         if (!paid)
                         {
-                            TempData["err"] = $"Debe simular el pago (₡{price:N0}) antes de descargar la plantilla.";
-                            // El PaymentsController tomará el monto desde SpecialtyAccess.PriceCRC
-                            return RedirectToAction("Simulate", "Payments", new { specialtyId = doc.SpecialtyId, termId = doc.TermId });
+                            TempData["err"] = $"Debe simular el pago (₡{price:N0}) antes de descargar este documento.";
+                            // Redirigir a simulacion de pago de documento
+                            return RedirectToAction("SimulateDocument", "Payments", new { documentId = doc.Id });
                         }
                     }
                 }
@@ -156,7 +177,7 @@ namespace Sistema_Gestion_MEP.Controllers
             var physical = MapPathSafe(doc.StoredPath);
             if (!System.IO.File.Exists(physical))
             {
-                TempData["err"] = "El archivo físico no existe en el servidor.";
+                TempData["err"] = "El archivo fisico no existe en el servidor.";
                 LogActivity("Download", "Document", doc.Id.ToString(), "Archivo no encontrado", success: false);
                 return RedirectToAction("Index", "Home");
             }
@@ -178,49 +199,30 @@ namespace Sistema_Gestion_MEP.Controllers
                 .Where(a => a.UserId == userId)
                 .Select(a => new
                 {
-                    a.SpecialtyId,
-                    a.TermId,
-                    SpecialtyName = a.Specialty.Name,
-                    TermLabel = a.Term.Label,
+                    a.Id,
+                    Label = a.Specialty.Name + " - " + a.Term.Label + " " + a.Term.Year,
                     a.DeadlineUtc
                 })
                 .ToList();
 
-            // Selects agrupados por texto "Nombre — Label"
-            ViewBag.AccessKey = new SelectList(
-                myAccess.Select(a => new
-                {
-                    Key = $"{a.SpecialtyId}|{a.TermId}",
-                    Text = $"{a.SpecialtyName} — {a.TermLabel}"
-                }),
-                "Key", "Text");
+            ViewBag.SpecialtyAccessId = new SelectList(myAccess, "Id", "Label");
 
             return View();
         }
 
         [HttpPost, Authorize(Roles = "Profesor"), ValidateAntiForgeryToken]
-        public ActionResult UploadSubmission(string AccessKey, HttpPostedFileBase file)
+        public ActionResult UploadSubmission(int SpecialtyAccessId, HttpPostedFileBase file)
         {
             var userId = User.Identity.GetUserId();
 
-            if (string.IsNullOrWhiteSpace(AccessKey) || !AccessKey.Contains("|"))
-            {
-                TempData["err"] = "Debe seleccionar una especialidad y periodo.";
-                return RedirectToAction("UploadSubmission");
-            }
-
             if (file == null || file.ContentLength == 0 || !IsPdf(file))
             {
-                TempData["err"] = "Debe seleccionar un archivo PDF válido.";
+                TempData["err"] = "Debe seleccionar un archivo PDF valido.";
                 return RedirectToAction("UploadSubmission");
             }
 
-            var parts = AccessKey.Split('|');
-            int specialtyId = int.Parse(parts[0]);
-            int termId = int.Parse(parts[1]);
-
             var access = _db.SpecialtyAccesses.FirstOrDefault(a =>
-                a.UserId == userId && a.SpecialtyId == specialtyId && a.TermId == termId);
+                a.Id == SpecialtyAccessId && a.UserId == userId);
 
             if (access == null)
             {
@@ -228,10 +230,10 @@ namespace Sistema_Gestion_MEP.Controllers
                 return RedirectToAction("UploadSubmission");
             }
 
-            // Validar fecha límite (si existe)
+            // Validar fecha limite (si existe)
             if (access.DeadlineUtc.HasValue && DateTime.UtcNow > access.DeadlineUtc.Value)
             {
-                TempData["err"] = "La fecha límite ha vencido. No se puede subir la entrega.";
+                TempData["err"] = "La fecha limite ha vencido. No se puede subir la entrega.";
                 LogActivity("Upload", "Document", null, "Entrega fuera de fecha", success: false);
                 return RedirectToAction("UploadSubmission");
             }
@@ -242,7 +244,7 @@ namespace Sistema_Gestion_MEP.Controllers
             var safeName = MakeSafeFileName(originalName);
             var uniqueName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{safeName}";
 
-            // Guardamos por usuario para organización
+            // Guardamos por usuario para organizacion
             var userFolder = $"{VirtualPathUtility.ToAbsolute(SUBMISSIONS_DIR).TrimEnd('/')}/{userId}";
             EnsureDir(userFolder);
             var relPath = $"{userFolder}/{uniqueName}";
@@ -253,12 +255,12 @@ namespace Sistema_Gestion_MEP.Controllers
             {
                 Type = 2, // Entrega
                 OwnerUserId = userId,
-                SpecialtyId = specialtyId,
-                TermId = termId,
+                SpecialtyAccessId = SpecialtyAccessId,
                 FileName = originalName,
                 StoredPath = relPath,
                 FileSizeBytes = file.ContentLength,
-                UploadedAtUtc = DateTime.UtcNow
+                UploadedAtUtc = DateTime.UtcNow,
+                PriceCRC = null // Las entregas no tienen precio
             };
 
             _db.Documents.Add(doc);
